@@ -7,7 +7,7 @@ export default authMiddleware({
     // "/" will be accessible to all users
     publicRoutes: [
         "/",
-        // "/api/trpc/post.hello"
+        "/api/trpc/post.getAll",
     ]
 });
 

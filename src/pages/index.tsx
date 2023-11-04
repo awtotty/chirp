@@ -5,7 +5,7 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
+  const { data } = api.post.getAll.useQuery();
 
   return (
     <>
@@ -18,12 +18,16 @@ export default function Home() {
         <div className="flex align-right">
           <SignedIn>
             {/* Mount the UserButton component */}
-            <UserButton />
+            <UserButton afterSignOutUrl="/" />
           </SignedIn>
           <SignedOut>
             {/* Signed out users get sign in button */}
             <SignInButton />
           </SignedOut>
+        </div>
+        <div >
+          {/* for each element of data, create a div of the content */}
+          {data?.map((post) => (<div key={post.id}>{post.content}</div>))}
         </div>
       </main>
     </>
