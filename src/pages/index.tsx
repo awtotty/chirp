@@ -1,4 +1,4 @@
-import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton, useAuth, useSession, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
 import { JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, use } from "react";
@@ -6,12 +6,9 @@ import { JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, React
 import { RouterOutputs, api } from "~/utils/api";
 
 
+// component for creating a post
 const CreatePostWizard = () => {
   const { user } = useUser();
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="flex gap-3 w-full">
@@ -19,24 +16,74 @@ const CreatePostWizard = () => {
       <input placeholder="Emoji something" className="bg-transparent grow outline-none" />
     </div>
   );
+};
+
+const UserPostTopBar = () => {
+  return (
+    <>
+      <div className="flex align-right border-b border-slate-400 p-4 flex">
+        <SignedIn>
+          <CreatePostWizard />
+        </SignedIn>
+        <SignedOut>
+          {/* Signed out users get sign in button */}
+          <SignInButton />
+        </SignedOut>
+      </div>
+    </>
+  )
+};
+
+type PostWithAuthor = RouterOutputs["post"]["getAll"][0];
+
+// component for viewing a post
+const PostView = (props: PostWithAuthor) => {
+  const { post, author } = props;
+
+  return (
+    <div key={post.id} className="border-b border-slate-400 p-8 flex gap-2">
+      <img src={author.imgUrl} className="w-8 h-8 rounded-full" />
+      <div className="flex flex-col justify justify-center">
+      ·
+      </div>
+      <div className="flex-grow flex flex-col justify justify-center">
+        {post.content}
+      </div>
+    </div>
+  );
 }
 
+
+// Homepage
 export default function Home() {
+  const user = useUser();
   const { data, isLoading } = api.post.getAll.useQuery();
 
   if (isLoading) {
     return (
-      <div className="flex justify-center h-screen">
-        <div className="text-2xl">Loading...</div>
-      </div>
+      <main className="flex justify-center h-screen">
+        <div className="w-full md:max-w-2xl border-x border-slate-400">
+          <UserPostTopBar />
+          <div >
+          </div>
+          <div className="flex flex-col p-8">
+            Loading...
+          </div>
+        </div>
+      </main>
     );
   }
 
   if (!data) {
     return (
-      <div className="flex justify-center h-screen">
-        <div className="text-2xl">Something went wrong...</div>
-      </div>
+      <main className="flex justify-center h-screen">
+        <div className="w-full md:max-w-2xl border-x border-slate-400">
+          <UserPostTopBar />
+          <div className="flex flex-col p-8">
+            Error loading posts...
+          </div>
+        </div>
+      </main>
     );
   }
 
@@ -49,20 +96,10 @@ export default function Home() {
       </Head>
       <main className="flex justify-center h-screen">
         <div className="w-full md:max-w-2xl border-x border-slate-400">
-          <div className="flex align-right border-b border-slate-400 p-4 flex">
-            <SignedIn>
-              <CreatePostWizard />
-            </SignedIn>
-            <SignedOut>
-              {/* Signed out users get sign in button */}
-              <SignInButton />
-            </SignedOut>
-          </div>
+          <UserPostTopBar />
           <div className="flex flex-col">
-            {data?.map((post) => (
-              <div key={post.id} className="border-b border-slate-400 p-4">
-                {post.content}
-              </div>
+            {data?.map((postWithAuthor) => (
+              <PostView {...postWithAuthor} key={postWithAuthor.post.id} />
             ))}
           </div>
         </div>
