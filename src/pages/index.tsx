@@ -1,10 +1,7 @@
-import { SignInButton, SignedIn, SignedOut, UserButton, useAuth, useSession, useUser } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
-import Link from "next/link";
-import { JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, use } from "react";
 
 import { RouterOutputs, api } from "~/utils/api";
-
 
 // component for creating a post
 const CreatePostWizard = () => {
@@ -12,7 +9,7 @@ const CreatePostWizard = () => {
 
   return (
     <div className="flex gap-3 w-full">
-      <UserButton afterSignOutUrl="/" />
+      <UserButton afterSignOutUrl="/"  />
       <input placeholder="Emoji something" className="bg-transparent grow outline-none" />
     </div>
   );
@@ -41,13 +38,27 @@ const PostView = (props: PostWithAuthor) => {
   const { post, author } = props;
 
   return (
-    <div key={post.id} className="border-b border-slate-400 p-8 flex gap-2">
-      <img src={author.imgUrl} className="w-8 h-8 rounded-full" />
-      <div className="flex flex-col justify justify-center">
-      ·
+    <div key={post.id} className="border-b border-slate-400 p-8 flex gap-2 flex-row">
+      <div className="flex flex-col justify-center">
+        <img src={author.imgUrl} className="w-8 h-8 rounded-full justify justify-center" />
       </div>
+
+      <div className="flex flex-col justify-center text-slate-500">
+      </div>
+
       <div className="flex-grow flex flex-col justify justify-center">
-        {post.content}
+        <div className="flex text-slate-300">
+          <span>
+            {`@${author.username}`}
+          </span>
+          <span className="mx-2">·</span>
+          <span>
+            {new Date(post.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+        <div className="flex">
+          {post.content}
+        </div>
       </div>
     </div>
   );
@@ -96,7 +107,9 @@ export default function Home() {
       </Head>
       <main className="flex justify-center h-screen">
         <div className="w-full md:max-w-2xl border-x border-slate-400">
+
           <UserPostTopBar />
+
           <div className="flex flex-col">
             {data?.map((postWithAuthor) => (
               <PostView {...postWithAuthor} key={postWithAuthor.post.id} />
