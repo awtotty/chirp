@@ -104,4 +104,12 @@ export const createTRPCRouter = t.router;
  * can still access user session data if they are logged in
  */
 export const publicProcedure = t.procedure;
+
+/**
+ * Protected (authed) procedure
+ *
+ * This is the base piece you use to build new queries and mutations on your
+ * tRPC API. It guarantees that a user querying is authorized, and you can
+ * access user session data
+ */
 export const protectedProcedure = t.procedure.use(isAuthed);

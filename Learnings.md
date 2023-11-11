@@ -7,3 +7,6 @@ Things I learned while working on this project:
     - My users all had `username` as `null`
     - Enabled usernames from Clerk dashboard
 - `dayjs` is super easy for relative time
+- `zod` does input shape validation
+- Form submission in React likes to use `useState` for form state
+    - see `CreatePostWizard` component for an example

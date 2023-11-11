@@ -1,6 +1,7 @@
 import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Image from "next/image";
+import { useState } from "react";
 
 import { RouterOutputs, api } from "~/utils/api";
 
@@ -13,12 +14,36 @@ dayjs.extend(relativeTime);
 
 // component for creating a post
 const CreatePostWizard = () => {
-  const { user } = useUser();
+  const [input, setInput] = useState("");
+
+  // tRPC hook for state invalidation and other things
+  const apiUtils = api.useUtils();
+
+  // define the mutation and what to do when it succeeds
+  const { mutateAsync: createPost, isLoading: isPosting } = api.post.create.useMutation({
+    onSuccess: async () => {
+      setInput("");
+      await apiUtils.post.getAll.invalidate();
+    }
+  });
 
   return (
     <div className="flex gap-3 w-full">
       <UserButton afterSignOutUrl="/" />
-      <input placeholder="Emoji something" className="bg-transparent grow outline-none" />
+      <input
+        placeholder="Emoji something"
+        className="bg-transparent grow outline-none text-size-2xl flex-grow"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        disabled={isPosting}
+      />
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={async () => {
+        try { 
+          await createPost({ content: input })
+        } catch (e) {
+          console.error(e);
+        } 
+      }}>Post</button>
     </div>
   );
 };
