@@ -73,7 +73,7 @@ const PostView = (props: PostWithAuthor) => {
             {dayjs(post.createdAt).fromNow()}
           </span>
         </div>
-        <div className="flex">
+        <div className="flex text-2xl">
           {post.content}
         </div>
       </div>
