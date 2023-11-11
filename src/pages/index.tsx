@@ -27,6 +27,15 @@ const CreatePostWizard = () => {
     }
   });
 
+  // helper for form submission
+  const tryCreatePost = async () => {
+    try {
+      await createPost({ content: input });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <div className="flex gap-3 w-full">
       <UserButton afterSignOutUrl="/" />
@@ -36,13 +45,14 @@ const CreatePostWizard = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         disabled={isPosting}
+        onKeyDown={async (e) => {
+          if (e.key === "Enter") {
+            await tryCreatePost();
+          }
+        }}
       />
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={async () => {
-        try { 
-          await createPost({ content: input })
-        } catch (e) {
-          console.error(e);
-        } 
+        await tryCreatePost();
       }}>Post</button>
     </div>
   );
