@@ -1,7 +1,13 @@
 import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
+import Image from "next/image";
 
 import { RouterOutputs, api } from "~/utils/api";
+
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 // component for creating a post
 const CreatePostWizard = () => {
@@ -9,7 +15,7 @@ const CreatePostWizard = () => {
 
   return (
     <div className="flex gap-3 w-full">
-      <UserButton afterSignOutUrl="/"  />
+      <UserButton afterSignOutUrl="/" />
       <input placeholder="Emoji something" className="bg-transparent grow outline-none" />
     </div>
   );
@@ -40,20 +46,28 @@ const PostView = (props: PostWithAuthor) => {
   return (
     <div key={post.id} className="border-b border-slate-400 p-8 flex gap-2 flex-row">
       <div className="flex flex-col justify-center">
-        <img src={author.imgUrl} className="w-8 h-8 rounded-full justify justify-center" />
+        <Image
+          src={author.imgUrl}
+          className="w-8 h-8 rounded-full justify justify-center"
+          alt={`@${author.username}'s profile image`}
+          width={32}
+          height={32}
+          // placeholder="blur"
+          // blurDataURL="default-avatar.png"
+        />
       </div>
 
       <div className="flex flex-col justify-center text-slate-500">
       </div>
 
       <div className="flex-grow flex flex-col justify justify-center">
-        <div className="flex text-slate-300">
+        <div className="flex gap-1 text-slate-300">
           <span>
             {`@${author.username}`}
           </span>
           <span className="mx-2">·</span>
           <span>
-            {new Date(post.createdAt).toLocaleDateString()}
+            {dayjs(post.createdAt).fromNow()}
           </span>
         </div>
         <div className="flex">

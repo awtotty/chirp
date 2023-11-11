@@ -6,3 +6,4 @@ Things I learned while working on this project:
 - Clerk dashboard is where all the user management is done
     - My users all had `username` as `null`
     - Enabled usernames from Clerk dashboard
+- `dayjs` is super easy for relative time
