@@ -7,6 +7,8 @@ import { RouterOutputs, api } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
+import { LoadingPage } from "~/components/loading";
+
 dayjs.extend(relativeTime);
 
 // component for creating a post
@@ -21,6 +23,7 @@ const CreatePostWizard = () => {
   );
 };
 
+// component for creating a post and user management 
 const UserPostTopBar = () => {
   return (
     <>
@@ -52,8 +55,8 @@ const PostView = (props: PostWithAuthor) => {
           alt={`@${author.username}'s profile image`}
           width={32}
           height={32}
-          // placeholder="blur"
-          // blurDataURL="default-avatar.png"
+        // placeholder="blur"
+        // blurDataURL="default-avatar.png"
         />
       </div>
 
@@ -78,38 +81,39 @@ const PostView = (props: PostWithAuthor) => {
   );
 }
 
+// Feed is a sequence of PostsViews
+const Feed = () => {
+  // can use cached data from earlier useQuery() call here
+  const { data, isLoading: postsLoading } = api.post.getAll.useQuery();
 
-// Homepage
-export default function Home() {
-  const user = useUser();
-  const { data, isLoading } = api.post.getAll.useQuery();
-
-  if (isLoading) {
-    return (
-      <main className="flex justify-center h-screen">
-        <div className="w-full md:max-w-2xl border-x border-slate-400">
-          <UserPostTopBar />
-          <div >
-          </div>
-          <div className="flex flex-col p-8">
-            Loading...
-          </div>
-        </div>
-      </main>
-    );
+  if (postsLoading) {
+    return <LoadingPage />;
   }
 
   if (!data) {
-    return (
-      <main className="flex justify-center h-screen">
-        <div className="w-full md:max-w-2xl border-x border-slate-400">
-          <UserPostTopBar />
-          <div className="flex flex-col p-8">
-            Error loading posts...
-          </div>
-        </div>
-      </main>
-    );
+    return <div>Error loading posts...</div>;
+  }
+
+  return (
+    <div className="flex flex-col">
+      {data?.map((postWithAuthor) => (
+        <PostView {...postWithAuthor} key={postWithAuthor.post.id} />
+      ))}
+    </div>
+  )
+}
+
+
+// Homepage
+export default function Home() {
+  const { user, isLoaded: userLoaded } = useUser();
+
+  // start fetching posts early, cached version is used later in Feed render
+  api.post.getAll.useQuery();
+
+  // if user is not loaded, show loading page
+  if (!userLoaded) {
+    return <LoadingPage />
   }
 
   return (
@@ -124,11 +128,8 @@ export default function Home() {
 
           <UserPostTopBar />
 
-          <div className="flex flex-col">
-            {data?.map((postWithAuthor) => (
-              <PostView {...postWithAuthor} key={postWithAuthor.post.id} />
-            ))}
-          </div>
+          <Feed />
+
         </div>
       </main>
     </>
