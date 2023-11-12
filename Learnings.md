@@ -1,4 +1,4 @@
-Things I learned while working on this project: 
+## Things I learned while working on this project: 
 - Use debug mode for `authMiddleware`
     - Clerk was blocking access to posts and accessing userList. 
     - I thought this was a config issue, and chased a solution for a few hours.
@@ -10,3 +10,12 @@ Things I learned while working on this project:
 - `zod` does input shape validation
 - Form submission in React likes to use `useState` for form state
     - see `CreatePostWizard` component for an example
+
+## Overview of deployment: 
+- Host stateless on Vercel
+- Planetscale MySQL db with prisma ORM
+- Auth with Clerk 
+    - Holy cow clerk is amazing
+    - consider moving to Auth.js (previously NextAuth) for future
+- Axiom for logging
+- Upstash for rate limiting (can also be used for redis, cron jobs, etc.) 
