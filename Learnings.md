@@ -8,10 +8,14 @@
     - Enabled usernames from Clerk dashboard
 - `dayjs` is super easy for relative time
 - `zod` does input shape validation
+    - If using tRPC for api and `zod` for input form validation, likely need to specify shape of error message
+    - See `trpc.ts` `errorFormatter` and https://trpc.io/docs/server/error-formatting#adding-custom-formatting for example
 - Form submission in React likes to use `useState` for form state
     - see `CreatePostWizard` component for an example
+- Linters are kind of great 
 
 ## Overview of deployment: 
+Serverless deployment 
 - Host stateless on Vercel
 - Planetscale MySQL db with prisma ORM
 - Auth with Clerk 

@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import { LoadingPage } from "~/components/loading";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -24,17 +25,17 @@ const CreatePostWizard = () => {
     onSuccess: async () => {
       setInput("");
       await apiUtils.post.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0]);
+      }
+      else {
+        toast.error("Error creating post");
+      }
     }
   });
-
-  // helper for form submission
-  const tryCreatePost = async () => {
-    try {
-      await createPost({ content: input });
-    } catch (e) {
-      console.error(e);
-    }
-  }
 
   return (
     <div className="flex gap-3 w-full">
@@ -47,13 +48,19 @@ const CreatePostWizard = () => {
         disabled={isPosting}
         onKeyDown={async (e) => {
           if (e.key === "Enter") {
-            await tryCreatePost();
+            try {
+              await createPost({ content: input });
+            } catch (e) {
+            }
           }
         }}
       />
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={async () => {
-        await tryCreatePost();
-      }}>Post</button>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        disabled={isPosting}
+        onClick={async () => {
+          await createPost({ content: input });
+        }}>Post</button>
     </div>
   );
 };
