@@ -28,7 +28,7 @@ import type { SignedInAuthObject, SignedOutAuthObject } from "@clerk/nextjs/api"
 import { db } from "../db";
 
 interface AuthContext {
-  auth: SignedInAuthObject | SignedOutAuthObject;
+  auth: SignedInAuthObject | SignedOutAuthObject | null;
 }
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
@@ -84,7 +84,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 // check if the user is signed in, otherwise through a UNAUTHORIZED CODE
 const isAuthed = t.middleware(({ next, ctx }) => {
-  if (!ctx.auth.userId) {
+  if (!ctx.auth?.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 

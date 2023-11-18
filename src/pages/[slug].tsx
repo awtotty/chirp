@@ -40,8 +40,7 @@ export default function ProfilePage(props: { username: string }) {
   });
 
   if (isLoading) {
-    console.log('Loading');
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   if (!data) {
