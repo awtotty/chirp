@@ -18,8 +18,10 @@
 - I have a bit more to learn about server side processing. 
     - The Next.js SSG helpers process page data and cache it 
     - These can be used to prefetch page data, then deliver it to client before loading
+    - This apparently also helps with SEO 
     - I'm still ignorant about the details here, and further reading of docs is needed 
     - See https://nextjs.org/docs/pages/building-your-application/rendering/static-site-generation as a starting point
+- Separate linting, deployment, etc. to speed up 
 
 ## Overview of deployment: 
 - Host serverless on Vercel
@@ -29,3 +31,4 @@
     - consider moving to Auth.js (previously NextAuth) for future
 - Axiom for logging
 - Upstash for rate limiting (can also be used for redis, cron jobs, etc.) 
+- CI with Github
