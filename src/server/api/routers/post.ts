@@ -4,14 +4,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit"; 
 import { Redis } from "@upstash/redis"; 
+import { filterUserForClient } from "~/server/helpers/filterUserForClient"; 
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
-
-// client should only see limited info about a user for rendering posts
-const filterUserForClient = (user: User) => {
-  return { id: user.id, username: user.username, imgUrl: user.imageUrl }
-};
 
 export const postRouter = createTRPCRouter({
   getLatest: publicProcedure.query(({ ctx }) => {
