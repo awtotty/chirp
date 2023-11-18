@@ -13,10 +13,11 @@
 - Form submission in React likes to use `useState` for form state
     - see `CreatePostWizard` component for an example
 - Linters are kind of great 
+- The `disabled` attribute for html elements is powerful
+    - See `isPosting` in `index.tsx` for how to prevent duplicated actions during async ops
 
 ## Overview of deployment: 
-Serverless deployment 
-- Host stateless on Vercel
+- Host serverless on Vercel
 - Planetscale MySQL db with prisma ORM
 - Auth with Clerk 
     - Holy cow clerk is amazing

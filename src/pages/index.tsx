@@ -2,14 +2,13 @@ import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/n
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
-
-import { RouterOutputs, api } from "~/utils/api";
-
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-
-import { LoadingPage } from "~/components/loading";
 import toast from "react-hot-toast";
+
+import { RouterOutputs, api } from "~/utils/api";
+import { LoadingPage } from "~/components/loading";
+
 
 dayjs.extend(relativeTime);
 
@@ -126,19 +125,19 @@ const PostView = (props: PostWithAuthor) => {
 // Feed is a sequence of PostsViews
 const Feed = () => {
   // can use cached data from earlier useQuery() call here
-  const { data, isLoading: postsLoading } = api.post.getAll.useQuery();
+  const { data: posts, isLoading: postsLoading } = api.post.getAll.useQuery();
 
   if (postsLoading) {
     return <LoadingPage />;
   }
 
-  if (!data) {
+  if (!posts) {
     return <div>Error loading posts...</div>;
   }
 
   return (
     <div className="flex flex-col">
-      {data?.map((postWithAuthor) => (
+      {posts?.map((postWithAuthor) => (
         <PostView {...postWithAuthor} key={postWithAuthor.post.id} />
       ))}
     </div>

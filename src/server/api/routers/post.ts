@@ -5,8 +5,8 @@ import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit"; 
 import { Redis } from "@upstash/redis"; 
 
-
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+
 
 // client should only see limited info about a user for rendering posts
 const filterUserForClient = (user: User) => {
@@ -56,6 +56,7 @@ export const postRouter = createTRPCRouter({
       content: z.string().emoji("Only emojis are allowed").min(1).max(280),
     }),
   ).mutation(async ({ ctx, input }) => {
+    // User has to be signed in to create a post
     const userId = ctx.auth.userId;
 
     // Create a new ratelimiter, that allows 3 requests per 1 minute 
