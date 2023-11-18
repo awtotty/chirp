@@ -1,13 +1,39 @@
 import { auth, clerkClient } from "@clerk/nextjs";
 import type { User } from "@clerk/nextjs/dist/types/server";
+import type { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { Ratelimit } from "@upstash/ratelimit"; 
-import { Redis } from "@upstash/redis"; 
-import { filterUserForClient } from "~/server/helpers/filterUserForClient"; 
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
+
+const addUserDataToPosts = async (posts: Post[]) => {
+  // find users that authored the posts
+  const users = await clerkClient.users.getUserList({
+    userId: posts.map(post => post.authorId),
+    limit: 100,
+  });
+
+  // filter out their sensitive user info
+  const filteredUsers = users.map(filterUserForClient);
+
+  // bundle the post and user info together
+  return posts.map((post) => {
+    const author = filteredUsers.find(user => user.id === post.authorId);
+
+    if (!author?.username) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" });
+    }
+
+    return {
+      post,
+      author: author,
+    }
+  })
+};
 
 export const postRouter = createTRPCRouter({
   getLatest: publicProcedure.query(({ ctx }) => {
@@ -23,29 +49,21 @@ export const postRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
     });
 
-    // find users that authored the posts
-    const users = await clerkClient.users.getUserList({
-      userId: posts.map(post => post.authorId),
-      limit: 100,
-    });
-
-    // filter out their sensitive user info
-    const filteredUsers = users.map(filterUserForClient);
-
-    // bundle the post and user info together
-    return posts.map((post) => {
-      const author = filteredUsers.find(user => user.id === post.authorId);
-
-      if (!author?.username) {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" });
-      }
-
-      return {
-        post,
-        author: author,
-      }
-    })
+    return addUserDataToPosts(posts);
   }),
+
+  getPostsByUserId: publicProcedure
+    .input(z.object({
+      userId: z.string(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const posts = await ctx.db.post.findMany({
+        where: { authorId: input.userId },
+        take: 100,
+        orderBy: { createdAt: "desc" },
+      })
+      return addUserDataToPosts(posts);
+    }),
 
   create: protectedProcedure.input(
     z.object({

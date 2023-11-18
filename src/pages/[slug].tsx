@@ -7,7 +7,31 @@ import superjson from 'superjson';
 import { db } from '~/server/db';
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
+import { PostView } from "~/components/postview";
+import { LoadingPage } from "~/components/loading";
 
+
+const ProfileFeed = (props: { userId: string }) => {
+  const { data, isLoading } = api.post.getPostsByUserId.useQuery({
+    userId: props.userId,
+  });
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (!data || data.length === 0) {
+    return <div>No posts yet!</div>;
+  }
+
+  return (
+    <div className="flex flex-col">
+      {data.map(fullPost => (
+        <PostView key={fullPost.post.id} {...fullPost} /> 
+      ))}
+    </div>
+  )
+};
 
 // Profile page stub
 export default function ProfilePage(props: { username: string }) {
@@ -41,10 +65,12 @@ export default function ProfilePage(props: { username: string }) {
         </div>
         {/* hidden spacer */}
         <div className="h-[64px]"></div>
-        <div className="p-4 text-2xl font-bold">
+        <div className="p-4 text-2xl font-bold border-b border-slate-400">
           {`@${data.username}`}
         </div>
-        <div className="border-b border-slate-400"></div> 
+        <div className="border-b border-slate-400">
+          <ProfileFeed userId={data.id} />
+        </div>
       </PageLayout>
     </>
   );
