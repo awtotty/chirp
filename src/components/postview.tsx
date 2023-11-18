@@ -16,6 +16,7 @@ export const PostView = (props: PostWithAuthor) => {
   return (
     <div key={post.id} className="border-b border-slate-400 p-8 flex gap-2 flex-row">
       <div className="flex flex-col justify-center">
+        <Link href={`/@${author.username}`}>
         <Image
           src={author.imgUrl}
           className="w-8 h-8 rounded-full justify justify-center"
@@ -25,6 +26,7 @@ export const PostView = (props: PostWithAuthor) => {
         // placeholder="blur"
         // blurDataURL="default-avatar.png"
         />
+        </Link>
       </div>
 
       <div className="flex flex-col justify-center text-slate-500">
