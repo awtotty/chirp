@@ -17,15 +17,15 @@ export const PostView = (props: PostWithAuthor) => {
     <div key={post.id} className="border-b border-slate-400 p-4 flex gap-2 flex-row">
       <div className="flex flex-col justify-center">
         <Link href={`/@${author.username}`}>
-        <Image
-          src={author.imgUrl}
-          className="w-8 h-8 rounded-full justify justify-center"
-          alt={`@${author.username}'s profile image`}
-          width={32}
-          height={32}
-        // placeholder="blur"
-        // blurDataURL="default-avatar.png"
-        />
+          <Image
+            src={author.imgUrl}
+            className="w-8 h-8 rounded-full justify justify-center"
+            alt={`@${author.username}'s profile image`}
+            width={32}
+            height={32}
+          // placeholder="blur"
+          // blurDataURL="default-avatar.png"
+          />
         </Link>
       </div>
 
@@ -46,9 +46,11 @@ export const PostView = (props: PostWithAuthor) => {
             </span>
           </Link>
         </div>
-        <div className="flex text-2xl">
-          {post.content}
-        </div>
+        <Link href={`/post/${post.id}`}>
+          <div className="flex text-2xl">
+            {post.content}
+          </div>
+        </Link>
       </div>
     </div>
   );
