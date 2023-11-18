@@ -1,14 +1,11 @@
 import type { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
-import { createServerSideHelpers } from '@trpc/react-query/server';
-import { appRouter } from '~/server/api/root';
-import superjson from 'superjson';
-import { db } from '~/server/db';
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { PostView } from "~/components/postview";
 import { LoadingPage } from "~/components/loading";
+import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
 
 const ProfileFeed = (props: { userId: string }) => {
@@ -50,7 +47,7 @@ export default function ProfilePage(props: { username: string }) {
   return (
     <>
       <Head>
-        <title>Profile</title>
+        <title>{`@${data.username}`}</title>
       </Head>
       <PageLayout>
         <div className="relative border-slate-400 bg-slate-600 h-48">
@@ -77,14 +74,9 @@ export default function ProfilePage(props: { username: string }) {
 
 
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
-  const ssg = createServerSideHelpers({
-    router: appRouter,
-    // TODO: auth should be passed in from the request? 
-    ctx: { db, auth: null },
-    transformer: superjson,
-  });
+  const ssg = generateSSGHelper(); 
 
-  const slug = context.params?.slug as string;
+  const slug = context.params?.profile as string;
 
   if (!slug) {
     return {

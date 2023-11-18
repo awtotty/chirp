@@ -65,6 +65,24 @@ export const postRouter = createTRPCRouter({
       return addUserDataToPosts(posts);
     }),
 
+  getPostById: publicProcedure
+    .input(z.object({
+      postId: z.number(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.db.post.findUnique({
+        where: { id: input.postId },
+      });
+
+      if (!post) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
+      }
+
+      const posts = await addUserDataToPosts([post]);
+
+      return posts[0];
+    }),
+
   create: protectedProcedure.input(
     z.object({
       content: z.string().emoji("Only emojis are allowed").min(1).max(280),

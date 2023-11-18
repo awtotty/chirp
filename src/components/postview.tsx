@@ -14,7 +14,7 @@ export const PostView = (props: PostWithAuthor) => {
   const { post, author } = props;
 
   return (
-    <div key={post.id} className="border-b border-slate-400 p-8 flex gap-2 flex-row">
+    <div key={post.id} className="border-b border-slate-400 p-4 flex gap-2 flex-row">
       <div className="flex flex-col justify-center">
         <Link href={`/@${author.username}`}>
         <Image

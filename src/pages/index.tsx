@@ -1,14 +1,12 @@
 import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
-import Image from "next/image";
 import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import toast from "react-hot-toast";
 
-import { RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 import { LoadingPage } from "~/components/loading";
-import Link from "next/link";
 import { PageLayout } from "~/components/layout";
 import { PostView } from "~/components/postview";
 
