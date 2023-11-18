@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { RouterOutputs, api } from "~/utils/api";
 import { LoadingPage } from "~/components/loading";
 import Link from "next/link";
+import { PageLayout } from "~/components/layout";
 
 
 dayjs.extend(relativeTime);
@@ -169,15 +170,10 @@ export default function Home() {
         <meta name="description" content="Emoji-only Twitter Clone" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex justify-center h-screen">
-        <div className="w-full md:max-w-2xl border-x border-slate-400">
-
-          <UserPostTopBar />
-
-          <Feed />
-
-        </div>
-      </main>
+      <PageLayout>
+        <UserPostTopBar />
+        <Feed />
+      </PageLayout>
     </>
   );
 }

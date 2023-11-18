@@ -5,6 +5,7 @@ import { createServerSideHelpers } from '@trpc/react-query/server';
 import { appRouter } from '~/server/api/root';
 import superjson from 'superjson';
 import { db } from '~/server/db';
+import { PageLayout } from "~/components/layout";
 
 
 // Profile page stub
@@ -27,13 +28,9 @@ export default function ProfilePage(props: { username: string } ) {
       <Head>
         <title>Profile</title>
       </Head>
-      <main className="flex justify-center h-screen">
-        <div className="w-full md:max-w-2xl border-x border-slate-400">
-
+      <PageLayout>
         <div>{data.username}</div>
-
-        </div>
-      </main>
+      </PageLayout>
     </>
   );
 }
