@@ -1,0 +1,3 @@
+files:
+  - source: /src/pages
+    translation: /translation/%locale%
